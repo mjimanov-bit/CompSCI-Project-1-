@@ -1,0 +1,72 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loops Make</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <main class="app">
+        <h1>Loops Make</h1>
+        <p>Use the buttons to change all 20 icons.</p>
+
+        <div class="controls">
+            <button onclick="updateIcons('/move')">Move Icons</button>
+            <button onclick="updateIcons('/color')">Change Colors</button>
+            <button onclick="updateIcons('/shape')">Change Shapes</button>
+        </div>
+
+        <section id="iconArea"></section>
+        <p id="status">Ready!</p>
+    </main>
+
+    <script>
+        const iconArea = document.getElementById("iconArea");
+        const icons = [];
+
+        for (let i = 0; i < 20; i++) {
+            const element = document.createElement("div");
+            element.className = "icon";
+            element.id = "icon" + i;
+            element.textContent = "●";
+            iconArea.appendChild(element);
+            icons.push(element);
+        }
+
+        async function updateIcons(endpoint) {
+            const status = document.getElementById("status");
+            status.textContent = "Updating icons...";
+
+            try {
+                const response = await fetch(endpoint, {
+                    method: "POST"
+                });
+
+                if (!response.ok) {
+                    throw new Error("Request failed");
+                }
+
+                const data = await response.json();
+
+                for (let i = 0; i < data.length; i++) {
+                    const icon = icons[i];
+                    const result = data[i];
+
+                    icon.style.left = result.x + "px";
+                    icon.style.top = result.y + "px";
+                    icon.style.color = result.color;
+                    icon.textContent = result.shape;
+                }
+
+                status.textContent = "Updated all " + data.length + " icons!";
+            } catch (error) {
+                status.textContent = "Could not connect to the Python backend.";
+            }
+        }
+
+        window.addEventListener("load", () => updateIcons("/move"));
+    </script>
+</body>
+</html>
