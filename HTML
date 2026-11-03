@@ -4,69 +4,78 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Loops Make</title>
+    <title>Weather Forecast</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
+
 <body>
-    <main class="app">
-        <h1>Loops Make</h1>
-        <p>Use the buttons to change all 20 icons.</p>
 
-        <div class="controls">
-            <button onclick="updateIcons('/move')">Move Icons</button>
-            <button onclick="updateIcons('/color')">Change Colors</button>
-            <button onclick="updateIcons('/shape')">Change Shapes</button>
-        </div>
+    <main class="app-container">
+        <header>
+            <p class="eyebrow">DAILY WEATHER</p>
+            <h1>Weather Forecast</h1>
+            <p class="subtitle">Discover the weather somewhere in the world.</p>
+        </header>
 
-        <section id="iconArea"></section>
-        <p id="status">Ready!</p>
+        <section class="weather-card">
+            <p id="city">Your forecast is waiting</p>
+
+            <div id="icon" class="weather-icon">🌤️</div>
+
+            <h2 id="condition">Click below to generate a forecast</h2>
+
+            <div class="temperatures">
+                <div>
+                    <span class="temperature-label">HIGH</span>
+                    <p id="high">--°</p>
+                </div>
+
+                <div>
+                    <span class="temperature-label">LOW</span>
+                    <p id="low">--°</p>
+                </div>
+            </div>
+
+            <button onclick="generateForecast()">
+                Generate Forecast
+            </button>
+
+            <p id="status">Ready to forecast</p>
+        </section>
+
+        <footer>
+            Random Forecaster • Powered by Python
+        </footer>
     </main>
 
     <script>
-        const iconArea = document.getElementById("iconArea");
-        const icons = [];
-
-        for (let i = 0; i < 20; i++) {
-            const element = document.createElement("div");
-            element.className = "icon";
-            element.id = "icon" + i;
-            element.textContent = "●";
-            iconArea.appendChild(element);
-            icons.push(element);
-        }
-
-        async function updateIcons(endpoint) {
+        async function generateForecast() {
             const status = document.getElementById("status");
-            status.textContent = "Updating icons...";
+
+            status.textContent = "Loading forecast...";
 
             try {
-                const response = await fetch(endpoint, {
-                    method: "POST"
-                });
-
-                if (!response.ok) {
-                    throw new Error("Request failed");
-                }
-
+                const response = await fetch("/forecast");
                 const data = await response.json();
 
-                for (let i = 0; i < data.length; i++) {
-                    const icon = icons[i];
-                    const result = data[i];
-
-                    icon.style.left = result.x + "px";
-                    icon.style.top = result.y + "px";
-                    icon.style.color = result.color;
-                    icon.textContent = result.shape;
+                if (!response.ok) {
+                    throw new Error(data.error);
                 }
 
-                status.textContent = "Updated all " + data.length + " icons!";
+                document.getElementById("city").textContent = data.city;
+                document.getElementById("icon").textContent = data.icon;
+                document.getElementById("condition").textContent = data.condition;
+                document.getElementById("high").textContent = data.high + "°";
+                document.getElementById("low").textContent = data.low + "°";
+
+                status.textContent = "Forecast generated successfully";
+
             } catch (error) {
-                status.textContent = "Could not connect to the Python backend.";
+                status.textContent = "Could not load forecast.";
+                console.error(error);
             }
         }
-
-        window.addEventListener("load", () => updateIcons("/move"));
     </script>
+
 </body>
 </html>
