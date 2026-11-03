@@ -4,14 +4,70 @@ import random
 
 app = Flask(__name__)
 
-icons = [
-    {"id": f"icon{i}", "x": random.randint(0, 800),
-     "y": random.randint(0, 400), "color": "rgb(36, 87, 197)",
-     "shape": "●"}
-    for i in range(20)
+# Weather dataset
+weather_data = [
+    {
+        "city": "Denver",
+        "forecast_number": 2,
+        "icon": "☀️",
+        "condition": "Sunny",
+        "high": 72,
+        "low": 45
+    },
+    {
+        "city": "New York",
+        "forecast_number": 2,
+        "icon": "🌧️",
+        "condition": "Rainy",
+        "high": 61,
+        "low": 48
+    },
+    {
+        "city": "Chicago",
+        "forecast_number": 2,
+        "icon": "☁️",
+        "condition": "Cloudy",
+        "high": 58,
+        "low": 42
+    },
+    {
+        "city": "Miami",
+        "forecast_number": 2,
+        "icon": "⛈️",
+        "condition": "Thunderstorms",
+        "high": 84,
+        "low": 73
+    },
+    {
+        "city": "Seattle",
+        "forecast_number": 1,
+        "icon": "🌦️",
+        "condition": "Showers",
+        "high": 55,
+        "low": 44
+    }
 ]
 
-shapes = ["●", "■", "▲", "★", "♥", "◆", "✚", "⬟"]
+
+# Filter forecasts using a traversal
+def filter_weather():
+    filtered_weather = []
+
+    for i in range(len(weather_data)):
+        if weather_data[i]["forecast_number"] == 2:
+            filtered_weather.append(weather_data[i])
+
+    return filtered_weather
+
+
+# Generate a random forecast
+def get_random_forecast():
+    filtered_weather = filter_weather()
+
+    if len(filtered_weather) == 0:
+        return None
+
+    return random.choice(filtered_weather)
 
 
 @app.route("/")
@@ -19,34 +75,15 @@ def home():
     return render_template("index.html")
 
 
-@app.route("/move", methods=["POST"])
-def move_icons():
-    for icon in icons:
-        icon["x"] = random.randint(0, 800)
-        icon["y"] = random.randint(0, 400)
+@app.route("/forecast")
+def forecast():
+    result = get_random_forecast()
 
-    return jsonify(icons)
+    if result is None:
+        return jsonify({"error": "No forecasts available"}), 404
 
-
-@app.route("/color", methods=["POST"])
-def change_colors():
-    for icon in icons:
-        red = random.randint(0, 255)
-        green = random.randint(0, 255)
-        blue = random.randint(0, 255)
-
-        icon["color"] = f"rgb({red}, {green}, {blue})"
-
-    return jsonify(icons)
-
-
-@app.route("/shape", methods=["POST"])
-def change_shapes():
-    for icon in icons:
-        icon["shape"] = random.choice(shapes)
-
-    return jsonify(icons)
+    return jsonify(result)
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=False)
+    app.run(debug=True)
