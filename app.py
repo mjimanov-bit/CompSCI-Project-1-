@@ -1,8 +1,17 @@
 
-from flask import Flask, render_template, jsonify
+import os
 import random
+from pathlib import Path
+from flask import Flask, render_template, jsonify
 
-app = Flask(__name__)
+# Always locate frontend folders relative to this file
+BASE_DIR = Path(__file__).resolve().parent
+
+app = Flask(
+    __name__,
+    template_folder=str(BASE_DIR / "templates"),
+    static_folder=str(BASE_DIR / "static")
+)
 
 # Weather dataset
 weather_data = [
@@ -49,7 +58,7 @@ weather_data = [
 ]
 
 
-# Filter forecasts using a traversal
+# Traverse the dataset and filter forecasts
 def filter_weather():
     filtered_weather = []
 
@@ -60,21 +69,23 @@ def filter_weather():
     return filtered_weather
 
 
-# Generate a random forecast
+# Select a random forecast from the filtered data
 def get_random_forecast():
     filtered_weather = filter_weather()
 
-    if len(filtered_weather) == 0:
+    if not filtered_weather:
         return None
 
     return random.choice(filtered_weather)
 
 
+# Homepage
 @app.route("/")
 def home():
     return render_template("index.html")
 
 
+# Forecast API
 @app.route("/forecast")
 def forecast():
     result = get_random_forecast()
@@ -84,6 +95,13 @@ def forecast():
 
     return jsonify(result)
 
+
+# Health check
+@app.route("/health")
+def health():
+    return jsonify({"status": "running"})
+
+
 if __name__ == "__main__":
-    import os
-    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
