@@ -1,0 +1,112 @@
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #101827, #1e3150);
+    color: white;
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 24px;
+}
+
+.app-container {
+    width: 100%;
+    max-width: 520px;
+    text-align: center;
+}
+
+.eyebrow {
+    color: #8ebaff;
+    letter-spacing: 4px;
+    font-size: 12px;
+    font-weight: bold;
+    margin-bottom: 12px;
+}
+
+h1 {
+    font-size: 38px;
+    margin-bottom: 10px;
+}
+
+.subtitle {
+    color: #b6c5d9;
+    margin-bottom: 35px;
+}
+
+.weather-card {
+    background: rgba(255, 255, 255, 0.09);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 22px;
+    padding: 35px 25px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+}
+
+#city {
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.weather-icon {
+    font-size: 75px;
+    margin: 25px 0;
+}
+
+#condition {
+    font-size: 23px;
+    margin-bottom: 30px;
+}
+
+.temperatures {
+    display: flex;
+    justify-content: center;
+    gap: 75px;
+    margin-bottom: 35px;
+}
+
+.temperature-label {
+    color: #9db3ce;
+    font-size: 12px;
+    letter-spacing: 2px;
+}
+
+.temperatures p {
+    font-size: 30px;
+    margin-top: 8px;
+}
+
+button {
+    width: 100%;
+    padding: 16px;
+    background: #6099f5;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+button:hover {
+    background: #407edc;
+    transform: translateY(-2px);
+}
+
+#status {
+    color: #a9bad0;
+    font-size: 12px;
+    margin-top: 18px;
+}
+
+footer {
+    margin-top: 25px;
+    color: #879bb5;
+    font-size: 12px;
+}
